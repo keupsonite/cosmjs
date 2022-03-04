@@ -11,6 +11,7 @@ export {
   encodeAminoPubkey,
   encodeBech32Pubkey,
   encodeSecp256k1Pubkey,
+  encodeEthSecp256k1Pubkey,
 } from "./encoding";
 export { createMultisigThresholdPubkey } from "./multisig";
 export { makeCosmoshubPath } from "./paths";
@@ -19,11 +20,13 @@ export {
   isEd25519Pubkey,
   isMultisigThresholdPubkey,
   isSecp256k1Pubkey,
+  isEthSecp256k1Pubkey,
   isSinglePubkey,
   MultisigThresholdPubkey,
   Pubkey,
   pubkeyType,
   Secp256k1Pubkey,
+  EthSecp256k1Pubkey,
   SinglePubkey,
 } from "./pubkeys";
 export { extractKdfConfiguration, Secp256k1HdWallet, Secp256k1HdWalletOptions } from "./secp256k1hdwallet";

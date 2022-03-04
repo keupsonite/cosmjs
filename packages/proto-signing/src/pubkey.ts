@@ -3,6 +3,7 @@ import {
   encodeSecp256k1Pubkey,
   isMultisigThresholdPubkey,
   isSecp256k1Pubkey,
+  isEthSecp256k1Pubkey,
   MultisigThresholdPubkey,
   Pubkey,
   SinglePubkey,
@@ -20,6 +21,14 @@ export function encodePubkey(pubkey: Pubkey): Any {
     });
     return Any.fromPartial({
       typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+      value: Uint8Array.from(PubKey.encode(pubkeyProto).finish()),
+    });
+  } else if (isEthSecp256k1Pubkey(pubkey)) {
+    const pubkeyProto = PubKey.fromPartial({
+      key: fromBase64(pubkey.value),
+    });
+    return Any.fromPartial({
+      typeUrl: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
       value: Uint8Array.from(PubKey.encode(pubkeyProto).finish()),
     });
   } else if (isMultisigThresholdPubkey(pubkey)) {
@@ -54,6 +63,9 @@ export function decodePubkey(pubkey?: Any | null): Pubkey | null {
 
   switch (pubkey.typeUrl) {
     case "/cosmos.crypto.secp256k1.PubKey": {
+      return decodeSinglePubkey(pubkey);
+    }
+    case "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
       return decodeSinglePubkey(pubkey);
     }
     case "/cosmos.crypto.multisig.LegacyAminoPubKey": {
