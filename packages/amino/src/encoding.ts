@@ -46,6 +46,7 @@ const pubkeyAminoPrefixMultisigThreshold = fromHex("22c1f7e2" /* variable length
 
 /**
  * Decodes a pubkey in the Amino binary format to a type/value object.
+ * @todo: find a clean way to distinct Secp256k1 and EthSecp256k1 (has the same prefix)
  */
 export function decodeAminoPubkey(data: Uint8Array): Pubkey {
   if (arrayContentStartsWith(data, pubkeyAminoPrefixSecp256k1)) {
