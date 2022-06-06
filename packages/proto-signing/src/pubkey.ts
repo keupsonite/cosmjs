@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
   encodeSecp256k1Pubkey,
+  isEthSecp256k1Pubkey,
   isMultisigThresholdPubkey,
   isSecp256k1Pubkey,
-  isEthSecp256k1Pubkey,
   MultisigThresholdPubkey,
   Pubkey,
   SinglePubkey,

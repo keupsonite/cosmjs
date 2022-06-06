@@ -5,6 +5,7 @@ import {
   decodeBech32Pubkey,
   encodeAminoPubkey,
   encodeBech32Pubkey,
+  encodeEthSecp256k1Pubkey,
   encodeSecp256k1Pubkey,
 } from "./encoding";
 import { Pubkey } from "./pubkeys";
@@ -37,6 +38,25 @@ describe("encoding", () => {
     });
   });
 
+  describe("encodeEthSecp256k1Pubkey", () => {
+    it("encodes a compressed pubkey", () => {
+      const pubkey = fromBase64("Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin");
+      expect(encodeEthSecp256k1Pubkey(pubkey)).toEqual({
+        type: "tendermint/PubKeyEthSecp256k1",
+        value: "Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin",
+      });
+    });
+
+    it("throws for uncompressed public keys", () => {
+      const pubkey = fromBase64(
+        "BE8EGB7ro1ORuFhjOnZcSgwYlpe0DSFjVNUIkNNQxwKQE7WHpoHoNswYeoFkuYpYSKK4mzFzMV/dB0DVAy4lnNU=",
+      );
+      expect(() => encodeEthSecp256k1Pubkey(pubkey)).toThrowError(
+        /public key must be compressed ethsecp256k1/i,
+      );
+    });
+  });
+
   describe("decodeAminoPubkey", () => {
     it("works for secp256k1", () => {
       const amino = fromBech32(
@@ -45,6 +65,16 @@ describe("encoding", () => {
       expect(decodeAminoPubkey(amino)).toEqual({
         type: "tendermint/PubKeySecp256k1",
         value: "A08EGB7ro1ORuFhjOnZcSgwYlpe0DSFjVNUIkNNQxwKQ",
+      });
+    });
+
+    it("works for ethsecp256k1", () => {
+      const amino = fromBech32(
+        "evmospub1addwnpepqvhmtwxummaqj32qe7fa8yglejl37s6k8lp280pth2at2sehq352w6wm5v0",
+      ).data;
+      expect(decodeAminoPubkey(amino)).toEqual({
+        type: "tendermint/PubKeyEthSecp256k1",
+        value: "Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin",
       });
     });
 
@@ -122,6 +152,15 @@ describe("encoding", () => {
       });
     });
 
+    it("works for ethsecp256k1", () => {
+      expect(decodeBech32Pubkey(
+        "evmospub1addwnpepqvhmtwxummaqj32qe7fa8yglejl37s6k8lp280pth2at2sehq352w6wm5v0",
+      )).toEqual({
+        type: "tendermint/PubKeyEthSecp256k1",
+        value: "Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin",
+      });
+    });
+
     it("works for enigma pubkey", () => {
       expect(
         decodeBech32Pubkey("enigmapub1addwnpepqw5k9p439nw0zpg2aundx4umwx4nw233z5prpjqjv5anl5grmnchzp2xwvv"),
@@ -162,6 +201,17 @@ describe("encoding", () => {
       expect(encodeAminoPubkey(pubkey)).toEqual(expected);
     });
 
+    it("works for ethsecp256k1", () => {
+      const pubkey: Pubkey = {
+        type: "tendermint/PubKeyEthSecp256k1",
+        value: "Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin",
+      };
+      const expected = fromBech32(
+        "evmospub1addwnpepqvhmtwxummaqj32qe7fa8yglejl37s6k8lp280pth2at2sehq352w6wm5v0",
+      ).data;
+      expect(encodeAminoPubkey(pubkey)).toEqual(expected);
+    });
+
     it("works for ed25519", () => {
       // Decoded from http://localhost:26657/validators
       // Encoded from `corald tendermint show-validator`
@@ -184,6 +234,16 @@ describe("encoding", () => {
       };
       expect(encodeBech32Pubkey(pubkey, "cosmospub")).toEqual(
         "cosmospub1addwnpepqd8sgxq7aw348ydctp3n5ajufgxp395hksxjzc6565yfp56scupfqhlgyg5",
+      );
+    });
+
+    it("works for ethsecp256k1", () => {
+      const pubkey: Pubkey = {
+        type: "tendermint/PubKeyEthSecp256k1",
+        value: "Ay+1uNze+glFQM+T05EfzL8fQ1Y/wqO8K7q6tUM3BGin",
+      };
+      expect(encodeBech32Pubkey(pubkey, "evmospub")).toEqual(
+        "evmospub1addwnpepqvhmtwxummaqj32qe7fa8yglejl37s6k8lp280pth2at2sehq352w6wm5v0",
       );
     });
 

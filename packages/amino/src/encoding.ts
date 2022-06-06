@@ -3,15 +3,15 @@ import { Uint53 } from "@cosmjs/math";
 import { arrayContentStartsWith } from "@cosmjs/utils";
 
 import {
+  EthSecp256k1Pubkey,
   isEd25519Pubkey,
+  isEthSecp256k1Pubkey,
   isMultisigThresholdPubkey,
   isSecp256k1Pubkey,
-  isEthSecp256k1Pubkey,
   MultisigThresholdPubkey,
   Pubkey,
   pubkeyType,
   Secp256k1Pubkey,
-  EthSecp256k1Pubkey,
 } from "./pubkeys";
 
 export function encodeSecp256k1Pubkey(pubkey: Uint8Array): Secp256k1Pubkey {
@@ -26,7 +26,7 @@ export function encodeSecp256k1Pubkey(pubkey: Uint8Array): Secp256k1Pubkey {
 
 export function encodeEthSecp256k1Pubkey(pubkey: Uint8Array): EthSecp256k1Pubkey {
   if (pubkey.length !== 33 || (pubkey[0] !== 0x02 && pubkey[0] !== 0x03)) {
-    throw new Error("Public key must be compressed secp256k1, i.e. 33 bytes starting with 0x02 or 0x03");
+    throw new Error("Public key must be compressed ethsecp256k1, i.e. 33 bytes starting with 0x02 or 0x03");
   }
   return {
     type: pubkeyType.ethsecp256k1,
@@ -60,7 +60,7 @@ export function decodeAminoPubkey(data: Uint8Array): Pubkey {
   } else if (arrayContentStartsWith(data, pubkeyAminoPrefixEthSecp256k1)) {
     const rest = data.slice(pubkeyAminoPrefixEthSecp256k1.length);
     if (rest.length !== 33) {
-      throw new Error("Invalid rest data length. Expected 33 bytes (compressed secp256k1 pubkey).");
+      throw new Error("Invalid rest data length. Expected 33 bytes (compressed ethsecp256k1 pubkey).");
     }
     return {
       type: pubkeyType.ethsecp256k1,
